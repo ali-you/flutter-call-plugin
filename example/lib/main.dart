@@ -16,34 +16,19 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+  bool _callResult = false;
   final _flutterCallPlugin = FlutterCall();
 
-  @override
-  void initState() {
-    super.initState();
-    initPlatformState();
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    // We also handle the message potentially returning null.
+  Future<void> call() async {
+    bool res;
     try {
-      platformVersion =
-          await _flutterCallPlugin.getPlatformVersion() ?? 'Unknown platform version';
+      res = await _flutterCallPlugin.callNumber("+12125551212", simSlot: 0);
     } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
+      rethrow;
     }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
     if (!mounted) return;
-
     setState(() {
-      _platformVersion = platformVersion;
+      _callResult = res;
     });
   }
 
@@ -55,7 +40,27 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+          child: Column(
+            children: [
+              ElevatedButton(
+                  onPressed: () async {
+                    print(await _flutterCallPlugin.permissionStatus());
+                  },
+                  child: Text("Permission Status")),
+              ElevatedButton(
+                  onPressed: () async {
+                    print(await _flutterCallPlugin.getSimSlots());
+                  },
+                  child: Text("Sim Slots")),
+              ElevatedButton(
+                  onPressed: () {
+                    _flutterCallPlugin.requestPermission();
+                  },
+                  child: Text("Request Permission")),
+              ElevatedButton(onPressed: call, child: Text("Call Number")),
+              Text('Call number result: $_callResult')
+            ],
+          ),
         ),
       ),
     );

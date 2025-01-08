@@ -23,7 +23,15 @@ abstract class FlutterCallPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<String?> getPlatformVersion() {
-    throw UnimplementedError('platformVersion() has not been implemented.');
-  }
+  Future<bool> callNumber(String number, {int? simSlot}) =>
+      throw UnimplementedError('callNumber() has not been implemented.');
+
+  Future<bool> requestPermission() =>
+      throw UnimplementedError('requestPermission() has not been implemented.');
+
+  Future<String?> permissionStatus() =>
+      throw UnimplementedError('permissionStatus() has not been implemented.');
+
+  Future<List> getSimSlots() =>
+      throw UnimplementedError('getSimSlot() has not been implemented.');
 }
